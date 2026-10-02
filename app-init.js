@@ -55,6 +55,7 @@ $('procedureForm').addEventListener('submit', (e) => {
     amount: Number($('procedureAmount').value || 0),
     notes: $('procedureNotes').value.trim(),
     createdAt: new Date().toISOString(),
+    isEncounter: true,
   });
   $('procedureForm').reset();
   $('procedureDate').value = nowLocalInput();
