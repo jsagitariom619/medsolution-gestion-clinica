@@ -16,6 +16,7 @@
         <div>
           <strong>MedSolution</strong>
           <span>Gestión Clínica</span>
+          <small class="brand-professional" id="brandProfessionalName">Dr. Jeason Flores</small>
         </div>
       </div>
 
@@ -26,6 +27,7 @@
         <button class="nav-item" data-view="history"><span>▤</span> Historias clínicas</button>
         <button class="nav-item" data-view="procedures"><span>⌁</span> Procedimientos</button>
         <button class="nav-item" data-view="reports"><span>▥</span> Reportes</button>
+        <button class="nav-item" data-view="settings"><span>⚙</span> Configuración</button>
       </nav>
 
       <div class="sidebar-note">
@@ -284,6 +286,23 @@
               </table>
               <div id="movementsEmpty" class="empty-state">No hay movimientos para este período.</div>
             </div>
+          </article>
+        </section>
+
+        <section class="view" id="view-settings">
+          <article class="panel settings-panel">
+            <div class="panel-head"><div><h2>Configuración de la plataforma</h2><p>Personaliza la identidad profesional visible en MedSolution.</p></div></div>
+            <form id="settingsForm" class="form-grid">
+              <label class="span-2">Nombre del profesional
+                <input id="settingsProfessionalName" type="text" maxlength="80" placeholder="Dr. Jeason Flores" />
+              </label>
+              <div class="span-2 settings-preview">
+                <span>Vista previa</span>
+                <strong>MedSolution — Gestión Clínica</strong>
+                <small id="settingsPreviewName">Dr. Jeason Flores</small>
+              </div>
+              <div class="form-actions span-2"><button class="primary" type="submit">Guardar configuración</button></div>
+            </form>
           </article>
         </section>
       </div>
