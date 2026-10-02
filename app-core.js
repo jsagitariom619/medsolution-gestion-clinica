@@ -110,6 +110,15 @@ function navigate(view) {
 }
 
 function getDefaultReportRange() {
+  const dates = [
+    ...state.attentions.map(a => a.date),
+    ...state.procedures.map(p => p.date),
+  ].filter(Boolean).map(toDate).filter(Boolean).sort((a,b) => a - b);
+
+  if (dates.length) {
+    return { from: isoDate(dates[0]), to: isoDate(dates[dates.length - 1]) };
+  }
+
   const today = new Date();
   const first = new Date(today.getFullYear(), today.getMonth(), 1);
   return { from: isoDate(first), to: isoDate(today) };
