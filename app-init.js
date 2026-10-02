@@ -130,7 +130,31 @@ $('printReport').addEventListener('click', () => {
   setTimeout(() => document.body.classList.remove('print-management'), 500);
 });
 $('settingsProfessionalName').addEventListener('input', () => {
-  $('settingsPreviewName').textContent = $('settingsProfessionalName').value.trim() || 'Dr. Jeason Flores';
+  const name = $('settingsProfessionalName').value.trim() || 'Dr. Jeason Flores';
+  $('settingsPreviewName').textContent = name;
+  const initials = profileInitials(name);
+  $('settingsProfileInitials').textContent = initials;
+});
+
+$('settingsProfilePhoto').addEventListener('change', (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) return showToast('Selecciona una imagen válida.');
+  if (file.size > 2 * 1024 * 1024) return showToast('La imagen debe pesar menos de 2 MB.');
+  const reader = new FileReader();
+  reader.onload = () => {
+    state.settings = { ...(state.settings || {}), profilePhoto: String(reader.result || '') };
+    saveState();
+    showToast('Foto de perfil actualizada.');
+  };
+  reader.readAsDataURL(file);
+});
+
+$('removeProfilePhoto').addEventListener('click', () => {
+  state.settings = { ...(state.settings || {}), profilePhoto: '' };
+  $('settingsProfilePhoto').value = '';
+  saveState();
+  showToast('Foto de perfil eliminada.');
 });
 
 $('settingsForm').addEventListener('submit', (e) => {
