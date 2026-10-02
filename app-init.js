@@ -116,7 +116,18 @@ $('reportMonth').addEventListener('click', () => {
 
 $('printReport').addEventListener('click', () => {
   renderReports();
+  const from = toDate(reportRange.from);
+  const to = toDate(reportRange.to);
+  const isFullYear = from && to &&
+    from.getFullYear() === to.getFullYear() &&
+    from.getMonth() === 0 && from.getDate() === 1 &&
+    to.getMonth() === 11 && to.getDate() === 31;
+  document.body.classList.toggle('print-management', Boolean(isFullYear));
+  if (isFullYear) {
+    $('printReportPeriod').textContent = `Informe de Gestión ${from.getFullYear()}`;
+  }
   window.print();
+  setTimeout(() => document.body.classList.remove('print-management'), 500);
 });
 $('exportJson').addEventListener('click', exportJson);
 $('exportCsv').addEventListener('click', exportCsv);
