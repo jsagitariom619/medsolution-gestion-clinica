@@ -1,5 +1,9 @@
 function renderAttentions() {
-  const list = [...state.attentions].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 10);
+  const list = [
+    ...state.attentions.map(a => ({ ...a, recordType: 'attention' })),
+    ...state.procedures.filter(p => p.isEncounter).map(p => ({ ...p, recordType: 'procedure' })),
+  ].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 10);
+
   const root = $('attentionList');
   if (!list.length) {
     root.className = 'stack-list empty-state';
@@ -9,9 +13,10 @@ function renderAttentions() {
   root.className = 'stack-list';
   root.innerHTML = '';
   list.forEach(a => {
+    const isProcedure = a.recordType === 'procedure';
     const item = document.createElement('div');
     item.className = 'stack-item';
-    item.innerHTML = `<div class="activity-icon">A</div><div class="stack-main"><strong>${escapeHtml(patientName(a.patientId))}</strong><span>${escapeHtml(a.reason || 'Atención clínica')}${a.diagnosis ? ` · ${escapeHtml(a.diagnosis)}` : ''}</span></div><time>${fmtDate(a.date)}</time>`;
+    item.innerHTML = `<div class="activity-icon">${isProcedure ? 'P' : 'A'}</div><div class="stack-main"><strong>${escapeHtml(patientName(a.patientId))}</strong><span>${isProcedure ? escapeHtml(a.name || 'Procedimiento') : escapeHtml(a.reason || 'Atención clínica')}${!isProcedure && a.diagnosis ? ` · ${escapeHtml(a.diagnosis)}` : ''}</span></div><time>${fmtDate(a.date)}</time>`;
     root.appendChild(item);
   });
 }
@@ -38,8 +43,10 @@ function renderDashboard() {
   const range = getDefaultReportRange();
   const monthAtt = state.attentions.filter(a => inRange(a.date, range.from, range.to));
   const monthProc = state.procedures.filter(p => inRange(p.date, range.from, range.to));
+  const monthEncounterProc = monthProc.filter(p => p.isEncounter);
+
   $('statPatients').textContent = state.patients.length;
-  $('statAttentions').textContent = monthAtt.length;
+  $('statAttentions').textContent = monthAtt.length + monthEncounterProc.length;
   $('statProcedures').textContent = monthProc.length;
   $('statAmount').textContent = fmtCurrency(monthProc.reduce((s,p) => s + Number(p.amount || 0), 0));
 
@@ -47,6 +54,7 @@ function renderDashboard() {
     ...state.attentions.map(a => ({ type: 'Atención', icon: 'A', date: a.date, patientId: a.patientId, detail: a.reason || 'Consulta clínica' })),
     ...state.procedures.map(p => ({ type: 'Procedimiento', icon: 'P', date: p.date, patientId: p.patientId, detail: p.name })),
   ].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 7);
+
   const root = $('recentActivity');
   if (!activity.length) {
     root.className = 'activity-list empty-state';
