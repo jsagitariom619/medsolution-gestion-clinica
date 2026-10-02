@@ -85,6 +85,10 @@ function renderReports() {
   $('reportAverage').textContent = fmtCurrency(average);
   $('reportActiveDays').textContent = activeDays;
 
+  const monthsWithActivity = new Set([...attentions, ...procedures].map(x => reportMonthKey(x.date)).filter(Boolean)).size;
+  $('printMonthlyAverage').textContent = fmtCurrency(monthsWithActivity ? revenue / monthsWithActivity : 0);
+  $('printAttentionAverage').textContent = monthsWithActivity ? (attentionCount / monthsWithActivity).toLocaleString('es-BO', { maximumFractionDigits: 1 }) : '0';
+
   const procCounts = procedures.reduce((acc,p) => {
     const key = p.name || 'Sin especificar';
     acc[key] = (acc[key] || 0) + 1;
