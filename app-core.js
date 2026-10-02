@@ -1,7 +1,7 @@
 const STORAGE_KEY = 'medsolution.clinic.v1';
 const SCHEMA_VERSION = 1;
 
-const emptyState = () => ({ version: SCHEMA_VERSION, patients: [], attentions: [], procedures: [] });
+const emptyState = () => ({ version: SCHEMA_VERSION, patients: [], attentions: [], procedures: [], settings: { professionalName: 'Dr. Jeason Flores' } });
 let state = loadState();
 let currentView = 'dashboard';
 let reportRange = getDefaultReportRange();
@@ -13,6 +13,7 @@ const titles = {
   history: ['Historias clínicas', 'Evolución longitudinal por paciente'],
   procedures: ['Procedimientos', 'Servicios y procedimientos realizados'],
   reports: ['Reportes', 'Movimientos y actividad clínica por período'],
+  settings: ['Configuración', 'Identidad y preferencias de la plataforma'],
 };
 
 const $ = (id) => document.getElementById(id);
@@ -35,6 +36,9 @@ function normalizeState(data) {
     patients: Array.isArray(data?.patients) ? data.patients : [],
     attentions: Array.isArray(data?.attentions) ? data.attentions : [],
     procedures: Array.isArray(data?.procedures) ? data.procedures : [],
+    settings: {
+      professionalName: String(data?.settings?.professionalName || 'Dr. Jeason Flores').trim() || 'Dr. Jeason Flores',
+    },
   };
 }
 
@@ -141,7 +145,15 @@ function inRange(value, from, to) {
   return (!from || day >= from) && (!to || day <= to);
 }
 
+function renderSettings() {
+  const name = state.settings?.professionalName || 'Dr. Jeason Flores';
+  $('brandProfessionalName').textContent = name;
+  $('settingsProfessionalName').value = name;
+  $('settingsPreviewName').textContent = name;
+}
+
 function renderAll() {
+  renderSettings();
   renderPatientSelects();
   renderPatients();
   renderAttentions();
