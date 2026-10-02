@@ -70,15 +70,19 @@ function fmtCurrency(value) {
   return `Bs ${new Intl.NumberFormat('es-BO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)}`;
 }
 
-function getAge(dob) {
-  if (!dob) return '—';
-  const birth = new Date(`${dob}T00:00:00`);
-  if (Number.isNaN(birth.getTime())) return '—';
-  const now = new Date();
-  let age = now.getFullYear() - birth.getFullYear();
-  const m = now.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
-  return age >= 0 ? `${age} años` : '—';
+function getAge(dob, recordedAge) {
+  if (dob) {
+    const birth = new Date(`${dob}T00:00:00`);
+    if (!Number.isNaN(birth.getTime())) {
+      const now = new Date();
+      let age = now.getFullYear() - birth.getFullYear();
+      const m = now.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
+      if (age >= 0) return `${age} años`;
+    }
+  }
+  const historical = Number(recordedAge);
+  return Number.isFinite(historical) && historical > 0 ? `${historical} años (registrada)` : '—';
 }
 
 function patientById(id) {
@@ -179,7 +183,7 @@ function renderPatients() {
       <td><strong>${escapeHtml(p.name)}</strong><small>${p.sex ? escapeHtml(p.sex) : 'Sin sexo especificado'}</small></td>
       <td>${escapeHtml(p.doc || '—')}</td>
       <td>${escapeHtml(p.phone || '—')}</td>
-      <td>${escapeHtml(getAge(p.dob))}</td>
+      <td>${escapeHtml(getAge(p.dob, p.ageRecorded))}</td>
       <td><div class="row-actions"><button class="row-action" data-history="${p.id}">Historia</button><button class="row-action" data-edit-patient="${p.id}">Editar</button><button class="row-action" data-delete-patient="${p.id}">Eliminar</button></div></td>`;
     tbody.appendChild(tr);
   });
