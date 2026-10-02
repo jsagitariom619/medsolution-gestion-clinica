@@ -180,3 +180,22 @@ td small { color: var(--muted); }
   .report-stats-six { grid-template-columns: 1fr 1fr; }
   .report-presets .secondary { flex: 1 1 calc(50% - 8px); }
 }
+
+
+.patients-list-table th:first-child,
+.patients-list-table td:first-child { width: 34%; }
+.patients-list-table th:nth-child(2),
+.patients-list-table td:nth-child(2) { width: 16%; white-space: nowrap; }
+.patients-list-table th:last-child,
+.patients-list-table td:last-child { width: 50%; }
+.patient-actions { justify-content: flex-start; flex-wrap: wrap; gap: 6px; }
+.patient-actions .row-action { white-space: nowrap; }
+
+@media (max-width: 760px) {
+  .patients-list-table th:first-child,
+  .patients-list-table td:first-child { min-width: 180px; }
+  .patients-list-table th:nth-child(2),
+  .patients-list-table td:nth-child(2) { min-width: 105px; }
+  .patients-list-table th:last-child,
+  .patients-list-table td:last-child { min-width: 330px; }
+}
