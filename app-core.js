@@ -1,7 +1,7 @@
 const STORAGE_KEY = 'medsolution.clinic.v1';
 const SCHEMA_VERSION = 1;
 
-const emptyState = () => ({ version: SCHEMA_VERSION, patients: [], attentions: [], procedures: [], settings: { professionalName: 'Dr. Jeason Flores' } });
+const emptyState = () => ({ version: SCHEMA_VERSION, patients: [], attentions: [], procedures: [], settings: { professionalName: 'Dr. Jeason Flores', profilePhoto: '' } });
 let state = loadState();
 let currentView = 'dashboard';
 let reportRange = getDefaultReportRange();
@@ -38,6 +38,7 @@ function normalizeState(data) {
     procedures: Array.isArray(data?.procedures) ? data.procedures : [],
     settings: {
       professionalName: String(data?.settings?.professionalName || 'Dr. Jeason Flores').trim() || 'Dr. Jeason Flores',
+      profilePhoto: String(data?.settings?.profilePhoto || ''),
     },
   };
 }
@@ -145,11 +146,35 @@ function inRange(value, from, to) {
   return (!from || day >= from) && (!to || day <= to);
 }
 
+function profileInitials(name) {
+  const clean = String(name || '').replace(/^Dr\.?\s*/i, '').trim();
+  const parts = clean.split(/\s+/).filter(Boolean);
+  return ((parts[0]?.[0] || 'D') + (parts[1]?.[0] || '')).toUpperCase();
+}
+
+function renderProfileAvatar(imageId, initialsId, photo, initials) {
+  const img = $(imageId);
+  const text = $(initialsId);
+  img.src = photo || '';
+  img.style.display = photo ? 'block' : 'none';
+  text.style.display = photo ? 'none' : 'grid';
+}
+
 function renderSettings() {
   const name = state.settings?.professionalName || 'Dr. Jeason Flores';
+  const photo = state.settings?.profilePhoto || '';
+  const initials = profileInitials(name);
   $('brandProfessionalName').textContent = name;
   $('settingsProfessionalName').value = name;
   $('settingsPreviewName').textContent = name;
+  $('dashboardProfessionalName').textContent = name;
+  $('topbarProfessionalName').textContent = name;
+  renderProfileAvatar('dashboardProfileImage', 'dashboardProfileInitials', photo, initials);
+  renderProfileAvatar('topbarProfileImage', 'topbarProfileInitials', photo, initials);
+  renderProfileAvatar('settingsProfileImage', 'settingsProfileInitials', photo, initials);
+  $('dashboardProfileInitials').textContent = initials;
+  $('topbarProfileInitials').textContent = initials;
+  $('settingsProfileInitials').textContent = initials;
 }
 
 function renderAll() {
