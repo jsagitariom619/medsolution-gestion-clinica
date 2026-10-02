@@ -40,15 +40,23 @@ function renderProcedures() {
 }
 
 function renderDashboard() {
-  const range = getDefaultReportRange();
-  const monthAtt = state.attentions.filter(a => inRange(a.date, range.from, range.to));
-  const monthProc = state.procedures.filter(p => inRange(p.date, range.from, range.to));
+  const now = new Date();
+  const monthFrom = isoDate(new Date(now.getFullYear(), now.getMonth(), 1));
+  const monthTo = isoDate(new Date(now.getFullYear(), now.getMonth() + 1, 0));
+  const monthLabelRaw = new Intl.DateTimeFormat('es-BO', { month: 'long', year: 'numeric' }).format(now);
+  const monthLabel = monthLabelRaw.charAt(0).toUpperCase() + monthLabelRaw.slice(1);
+
+  const monthAtt = state.attentions.filter(a => inRange(a.date, monthFrom, monthTo));
+  const monthProc = state.procedures.filter(p => inRange(p.date, monthFrom, monthTo));
   const monthEncounterProc = monthProc.filter(p => p.isEncounter);
 
   $('statPatients').textContent = state.patients.length;
   $('statAttentions').textContent = monthAtt.length + monthEncounterProc.length;
   $('statProcedures').textContent = monthProc.length;
   $('statAmount').textContent = fmtCurrency(monthProc.reduce((s,p) => s + Number(p.amount || 0), 0));
+  $('statAttentionsPeriod').textContent = monthLabel;
+  $('statProceduresPeriod').textContent = monthLabel;
+  $('statAmountPeriod').textContent = `Ingresos · ${monthLabel}`;
 
   const activity = [
     ...state.attentions.map(a => ({ type: 'Atención', icon: 'A', date: a.date, patientId: a.patientId, detail: a.reason || 'Consulta clínica' })),
