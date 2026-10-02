@@ -66,6 +66,10 @@ function reportMonthLabel(key) {
 function renderReports() {
   $('reportFrom').value = reportRange.from;
   $('reportTo').value = reportRange.to;
+  const periodLabel = reportRange.from && reportRange.to
+    ? `${fmtDate(`${reportRange.from}T12:00:00`, false)} — ${fmtDate(`${reportRange.to}T12:00:00`, false)}`
+    : 'Todo el historial';
+  $('printReportPeriod').textContent = periodLabel;
 
   const { attentions, procedures, patientIds } = getReportData();
   const encounterProcedures = procedures.filter(p => p.isEncounter);
