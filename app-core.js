@@ -183,10 +183,10 @@ function renderPatients() {
       <td><strong>${escapeHtml(p.name)}</strong></td>
       <td>${escapeHtml(getAge(p.dob, p.ageRecorded))}</td>
       <td><div class="row-actions patient-actions">
-        <button class="row-action" data-history="${p.id}">Historia clínica</button>
-        <button class="row-action" data-new-attention="${p.id}">Nueva atención</button>
-        <button class="row-action" data-new-procedure="${p.id}">Nuevo procedimiento</button>
-        <button class="row-action" data-edit-patient="${p.id}">Editar</button>
+        <button class="row-action patient-action-history" data-history="${p.id}">Historia clínica</button>
+        <button class="row-action patient-action-attention" data-new-attention="${p.id}">Nueva atención</button>
+        <button class="row-action patient-action-procedure" data-new-procedure="${p.id}">Nuevo procedimiento</button>
+        <button class="row-action patient-action-edit" data-edit-patient="${p.id}">Editar</button>
       </div></td>`;
     tbody.appendChild(tr);
   });
