@@ -261,3 +261,25 @@ td small { color: var(--muted); }
   thead { display:table-header-group; }
   tr { break-inside:avoid; }
 }
+
+
+.print-management-summary { display:none; }
+
+@media print {
+  body.print-management .print-management-summary {
+    display:flex !important;
+    gap:8mm;
+    margin-top:4mm;
+    padding-top:3mm;
+    border-top:1px solid #e4e7ec;
+    font-size:8.5pt;
+  }
+  body.print-management .print-management-summary span { display:flex; gap:2mm; }
+  body.print-management .report-detail-panel { display:none !important; }
+  body.print-management .reports-grid:first-of-type { display:none !important; }
+  body.print-management .management-monthly-panel,
+  body.print-management .management-procedure-panel { break-inside:avoid; page-break-inside:avoid; }
+  body.print-management .management-procedure-panel tbody tr:nth-child(n+11) { display:none; }
+  body.print-management .management-procedure-panel { margin-bottom:0 !important; }
+  body.print-management .report-stats-six { margin-bottom:4mm !important; }
+}
