@@ -22,6 +22,7 @@ function editPatient(id) {
   $('patientName').value = p.name || '';
   $('patientDoc').value = p.doc || '';
   $('patientDob').value = p.dob || '';
+  $('patientAgeRecorded').value = p.ageRecorded ?? '';
   $('patientSex').value = p.sex || '';
   $('patientPhone').value = p.phone || '';
   $('patientAddress').value = p.address || '';
