@@ -45,17 +45,26 @@
         </div>
         <div class="topbar-actions">
           <div class="status-pill"><span class="status-dot"></span> Local</div>
+          <button class="topbar-profile" data-go="settings" type="button" aria-label="Abrir perfil">
+            <span class="profile-avatar profile-avatar-small" id="topbarProfileAvatar"><span id="topbarProfileInitials">JF</span><img id="topbarProfileImage" alt="" /></span>
+            <span id="topbarProfessionalName">Dr. Jeason Flores</span>
+          </button>
           <button class="primary small" data-go="attention">+ Nueva atención</button>
         </div>
       </header>
 
       <div class="content">
         <section class="view active" id="view-dashboard">
-          <div class="notice">
+          <div class="dashboard-welcome">
             <div>
-              <strong>Plataforma lista para comenzar desde cero.</strong>
-              <p>No se cargaron pacientes ni movimientos ficticios. Puedes registrar actividad real o importar un respaldo propio.</p>
+              <span class="eyebrow">Resumen clínico</span>
+              <h2>Panel de gestión</h2>
+              <p>Consulta rápidamente la actividad clínica y los movimientos registrados.</p>
             </div>
+            <button class="dashboard-profile" data-go="settings" type="button">
+              <span class="profile-avatar" id="dashboardProfileAvatar"><span id="dashboardProfileInitials">JF</span><img id="dashboardProfileImage" alt="" /></span>
+              <span class="profile-copy"><small>Profesional</small><strong id="dashboardProfessionalName">Dr. Jeason Flores</strong><em>Ver perfil y configuración</em></span>
+            </button>
           </div>
 
           <div class="stats-grid">
@@ -296,6 +305,17 @@
               <label class="span-2">Nombre del profesional
                 <input id="settingsProfessionalName" type="text" maxlength="80" placeholder="Dr. Jeason Flores" />
               </label>
+              <div class="span-2 profile-photo-setting">
+                <span class="profile-avatar profile-avatar-large" id="settingsProfileAvatar"><span id="settingsProfileInitials">JF</span><img id="settingsProfileImage" alt="Foto del profesional" /></span>
+                <div>
+                  <strong>Foto de perfil</strong>
+                  <p>Opcional. Se guarda únicamente en este dispositivo.</p>
+                  <div class="profile-photo-actions">
+                    <label class="secondary file-button">Elegir imagen<input type="file" id="settingsProfilePhoto" accept="image/png,image/jpeg,image/webp" hidden /></label>
+                    <button class="secondary" id="removeProfilePhoto" type="button">Quitar foto</button>
+                  </div>
+                </div>
+              </div>
               <div class="span-2 settings-preview">
                 <span>Vista previa</span>
                 <strong>MedSolution — Gestión Clínica</strong>
