@@ -129,6 +129,18 @@ $('printReport').addEventListener('click', () => {
   window.print();
   setTimeout(() => document.body.classList.remove('print-management'), 500);
 });
+$('settingsProfessionalName').addEventListener('input', () => {
+  $('settingsPreviewName').textContent = $('settingsProfessionalName').value.trim() || 'Dr. Jeason Flores';
+});
+
+$('settingsForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const professionalName = $('settingsProfessionalName').value.trim() || 'Dr. Jeason Flores';
+  state.settings = { ...(state.settings || {}), professionalName };
+  saveState();
+  showToast('Configuración guardada.');
+});
+
 $('exportJson').addEventListener('click', exportJson);
 $('exportCsv').addEventListener('click', exportCsv);
 $('importJson').addEventListener('change', (e) => { if (e.target.files?.[0]) importJson(e.target.files[0]); });
