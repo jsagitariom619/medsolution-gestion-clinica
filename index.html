@@ -179,43 +179,84 @@
         <section class="view" id="view-reports">
           <article class="panel report-filter-panel">
             <div class="panel-head responsive-head">
-              <div><h2>Reportes de movimiento</h2><p>Filtra la actividad por período</p></div>
+              <div><h2>Reportes clínicos y financieros</h2><p>Atenciones, procedimientos e ingresos registrados por período</p></div>
               <div class="report-actions">
                 <button class="secondary" id="exportCsv">Exportar CSV</button>
                 <button class="secondary" id="exportJson">Respaldar JSON</button>
                 <label class="secondary file-button">Importar JSON<input type="file" id="importJson" accept="application/json" hidden /></label>
               </div>
             </div>
+            <div class="report-presets">
+              <button class="secondary" id="reportAll">Todo el historial</button>
+              <button class="secondary" id="reportYear">Este año</button>
+              <button class="secondary" id="reportMonth">Este mes</button>
+            </div>
             <div class="filters-inline">
               <label>Desde<input id="reportFrom" type="date" /></label>
               <label>Hasta<input id="reportTo" type="date" /></label>
               <button class="primary" id="applyReport">Aplicar</button>
             </div>
+            <p class="report-note">Los importes representan ingresos registrados por atenciones/procedimientos. Esta versión no registra egresos ni calcula utilidad neta.</p>
           </article>
 
-          <div class="stats-grid report-stats">
+          <div class="stats-grid report-stats report-stats-six">
             <article class="stat-card"><span>Pacientes atendidos</span><strong id="reportPatients">0</strong><small>Únicos en el período</small></article>
-            <article class="stat-card"><span>Atenciones</span><strong id="reportAttentions">0</strong><small>Consultas registradas</small></article>
-            <article class="stat-card"><span>Procedimientos</span><strong id="reportProcedures">0</strong><small>Servicios realizados</small></article>
-            <article class="stat-card"><span>Importe registrado</span><strong id="reportAmount">Bs 0,00</strong><small>Total de procedimientos</small></article>
+            <article class="stat-card"><span>Atenciones</span><strong id="reportAttentions">0</strong><small>Atenciones realizadas</small></article>
+            <article class="stat-card"><span>Procedimientos</span><strong id="reportProcedures">0</strong><small>Servicios registrados</small></article>
+            <article class="stat-card"><span>Ingresos</span><strong id="reportAmount">Bs 0,00</strong><small>Movimiento económico del período</small></article>
+            <article class="stat-card"><span>Ingreso promedio</span><strong id="reportAverage">Bs 0,00</strong><small>Promedio por procedimiento</small></article>
+            <article class="stat-card"><span>Días con actividad</span><strong id="reportActiveDays">0</strong><small>Días con movimientos registrados</small></article>
           </div>
 
           <div class="grid-2 reports-grid">
             <article class="panel">
-              <div class="panel-head"><div><h2>Procedimientos por tipo</h2><p>Distribución del período</p></div></div>
+              <div class="panel-head"><div><h2>Ingresos por mes</h2><p>Evolución del movimiento económico</p></div></div>
+              <div id="monthlyIncomeBars" class="bars empty-state">No hay ingresos en el período.</div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><div><h2>Atenciones por mes</h2><p>Volumen mensual de actividad clínica</p></div></div>
+              <div id="monthlyAttentionBars" class="bars empty-state">No hay atenciones en el período.</div>
+            </article>
+          </div>
+
+          <div class="grid-2 reports-grid">
+            <article class="panel">
+              <div class="panel-head"><div><h2>Procedimientos por tipo</h2><p>Cantidad realizada en el período</p></div></div>
               <div id="procedureBars" class="bars empty-state">No hay procedimientos en el período.</div>
             </article>
             <article class="panel">
-              <div class="panel-head"><div><h2>Actividad diaria</h2><p>Atenciones + procedimientos</p></div></div>
+              <div class="panel-head"><div><h2>Actividad diaria</h2><p>Días con mayor movimiento</p></div></div>
               <div id="dailyBars" class="bars empty-state">No hay actividad en el período.</div>
             </article>
           </div>
 
-          <article class="panel">
-            <div class="panel-head"><div><h2>Detalle de movimientos</h2><p>Registro consolidado del período seleccionado</p></div></div>
+          <article class="panel report-table-panel">
+            <div class="panel-head"><div><h2>Resumen mensual</h2><p>Comparación de pacientes, atenciones e ingresos por mes</p></div></div>
             <div class="table-wrap">
               <table>
-                <thead><tr><th>Fecha</th><th>Paciente</th><th>Tipo</th><th>Detalle</th><th>Importe</th></tr></thead>
+                <thead><tr><th>Período</th><th>Pacientes</th><th>Atenciones</th><th>Procedimientos</th><th>Ingresos</th><th>Promedio</th></tr></thead>
+                <tbody id="monthlySummaryTable"></tbody>
+              </table>
+              <div id="monthlySummaryEmpty" class="empty-state">No hay datos mensuales para este período.</div>
+            </div>
+          </article>
+
+          <article class="panel report-table-panel">
+            <div class="panel-head"><div><h2>Ingresos por procedimiento</h2><p>Cantidad, recaudación y participación sobre el total</p></div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Procedimiento</th><th>Cantidad</th><th>Ingresos</th><th>Promedio</th><th>Participación</th></tr></thead>
+                <tbody id="procedureSummaryTable"></tbody>
+              </table>
+              <div id="procedureSummaryEmpty" class="empty-state">No hay procedimientos para este período.</div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head"><div><h2>Detalle de movimientos</h2><p>Registro completo de atenciones y procedimientos del período seleccionado</p></div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Fecha</th><th>Paciente</th><th>Tipo</th><th>Detalle</th><th>Profesional</th><th>Importe</th></tr></thead>
                 <tbody id="movementsTable"></tbody>
               </table>
               <div id="movementsEmpty" class="empty-state">No hay movimientos para este período.</div>
