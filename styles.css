@@ -160,3 +160,23 @@ td small { color: var(--muted); }
   .activity-item, .stack-item { grid-template-columns: auto 1fr; }
   .activity-item time, .stack-item time { grid-column: 2; text-align: left; }
 }
+
+
+.report-presets { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.report-note { margin: 12px 0 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.report-stats-six { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.report-table-panel { margin-bottom: 20px; }
+.report-table-panel table { min-width: 760px; }
+.report-money { font-weight: 800; white-space: nowrap; }
+.report-share { min-width: 120px; }
+.report-share-track { height: 7px; background: #eef2f7; border-radius: 999px; overflow: hidden; margin-top: 5px; }
+.report-share-fill { height: 100%; background: linear-gradient(90deg, #4f8cff, #155eef); border-radius: 999px; }
+.report-period { font-weight: 750; white-space: nowrap; }
+
+@media (max-width: 1180px) {
+  .report-stats-six { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .report-stats-six { grid-template-columns: 1fr 1fr; }
+  .report-presets .secondary { flex: 1 1 calc(50% - 8px); }
+}
