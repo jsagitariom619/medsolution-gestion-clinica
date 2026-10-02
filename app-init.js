@@ -111,6 +111,20 @@ document.addEventListener('click', (e) => {
     renderHistory();
     return;
   }
+  const attentionBtn = e.target.closest('[data-new-attention]');
+  if (attentionBtn) {
+    navigate('attention');
+    $('attentionPatient').value = attentionBtn.dataset.newAttention;
+    $('attentionReason').focus();
+    return;
+  }
+  const procedureBtn = e.target.closest('[data-new-procedure]');
+  if (procedureBtn) {
+    navigate('procedures');
+    $('procedurePatient').value = procedureBtn.dataset.newProcedure;
+    $('procedureName').focus();
+    return;
+  }
   const editBtn = e.target.closest('[data-edit-patient]');
   if (editBtn) return editPatient(editBtn.dataset.editPatient);
   const deleteBtn = e.target.closest('[data-delete-patient]');
