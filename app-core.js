@@ -164,16 +164,12 @@ function renderSettings() {
   const name = state.settings?.professionalName || 'Dr. Jeason Flores';
   const photo = state.settings?.profilePhoto || '';
   const initials = profileInitials(name);
-  $('brandProfessionalName').textContent = name;
   $('settingsProfessionalName').value = name;
   $('settingsPreviewName').textContent = name;
   $('dashboardProfessionalName').textContent = name;
-  $('topbarProfessionalName').textContent = name;
   renderProfileAvatar('dashboardProfileImage', 'dashboardProfileInitials', photo, initials);
-  renderProfileAvatar('topbarProfileImage', 'topbarProfileInitials', photo, initials);
   renderProfileAvatar('settingsProfileImage', 'settingsProfileInitials', photo, initials);
   $('dashboardProfileInitials').textContent = initials;
-  $('topbarProfileInitials').textContent = initials;
   $('settingsProfileInitials').textContent = initials;
 }
 
