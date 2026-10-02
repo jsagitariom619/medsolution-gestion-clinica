@@ -17,7 +17,7 @@ function renderHistory() {
   root.innerHTML = '';
   const profile = document.createElement('div');
   profile.className = 'history-profile';
-  profile.innerHTML = `<div><h3>${escapeHtml(p.name)}</h3><p><strong>Edad:</strong> ${escapeHtml(getAge(p.dob))} &nbsp; <strong>Sexo:</strong> ${escapeHtml(p.sex || '—')}</p><p><strong>Documento:</strong> ${escapeHtml(p.doc || '—')} &nbsp; <strong>Teléfono:</strong> ${escapeHtml(p.phone || '—')}</p><p><strong>Dirección:</strong> ${escapeHtml(p.address || '—')}</p><p><strong>Antecedentes / observaciones:</strong> ${escapeHtml(p.notes || 'Sin observaciones registradas')}</p></div><div class="history-alert"><strong>Alergias</strong><br>${escapeHtml(p.allergies || 'No registradas')}</div>`;
+  profile.innerHTML = `<div><h3>${escapeHtml(p.name)}</h3><p><strong>Edad:</strong> ${escapeHtml(getAge(p.dob, p.ageRecorded))} &nbsp; <strong>Sexo:</strong> ${escapeHtml(p.sex || '—')}</p><p><strong>Documento:</strong> ${escapeHtml(p.doc || '—')} &nbsp; <strong>Teléfono:</strong> ${escapeHtml(p.phone || '—')}</p><p><strong>Dirección:</strong> ${escapeHtml(p.address || '—')}</p><p><strong>Antecedentes / observaciones:</strong> ${escapeHtml(p.notes || 'Sin observaciones registradas')}</p></div><div class="history-alert"><strong>Alergias</strong><br>${escapeHtml(p.allergies || 'No registradas')}</div>`;
   root.appendChild(profile);
 
   if (!entries.length) {
