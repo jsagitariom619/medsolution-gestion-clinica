@@ -69,10 +69,26 @@ function exportJson() {
 function exportCsv() {
   const { attentions, procedures } = getReportData();
   const dataRows = [];
-  attentions.forEach(a => dataRows.push([a.date, patientName(a.patientId), 'Atención', a.reason || 'Consulta clínica', '0']));
-  procedures.forEach(p => dataRows.push([p.date, patientName(p.patientId), 'Procedimiento', p.name, String(Number(p.amount || 0))]));
+  attentions.forEach(a => dataRows.push([
+    a.date,
+    patientName(a.patientId),
+    'Atención',
+    a.reason || 'Consulta clínica',
+    a.professional || '',
+    '',
+    '0'
+  ]));
+  procedures.forEach(p => dataRows.push([
+    p.date,
+    patientName(p.patientId),
+    'Procedimiento',
+    p.name,
+    p.professional || '',
+    p.category || '',
+    String(Number(p.amount || 0))
+  ]));
   dataRows.sort((a,b) => String(b[0]).localeCompare(String(a[0])));
-  const rows = [['fecha','paciente','tipo','detalle','importe_bs'], ...dataRows];
+  const rows = [['fecha','paciente','tipo','detalle','profesional','categoria','importe_bs'], ...dataRows];
   const csv = rows.map(row => row.map(v => `"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');
   downloadFile(`medsolution-movimientos-${reportRange.from}-a-${reportRange.to}.csv`, '\ufeff' + csv, 'text/csv;charset=utf-8');
   showToast('Reporte CSV generado.');
@@ -86,6 +102,7 @@ function importJson(file) {
       const normalized = normalizeState(parsed);
       if (!confirm(`Se importarán ${normalized.patients.length} pacientes, ${normalized.attentions.length} atenciones y ${normalized.procedures.length} procedimientos, reemplazando los datos locales actuales. ¿Continuar?`)) return;
       state = normalized;
+      reportRange = getDefaultReportRange();
       saveState();
       showToast('Respaldo importado correctamente.');
     } catch {
