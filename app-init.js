@@ -6,6 +6,7 @@ $('patientForm').addEventListener('submit', (e) => {
     name: $('patientName').value.trim(),
     doc: $('patientDoc').value.trim(),
     dob: $('patientDob').value,
+    ageRecorded: $('patientAgeRecorded').value ? Number($('patientAgeRecorded').value) : null,
     sex: $('patientSex').value,
     phone: $('patientPhone').value.trim(),
     address: $('patientAddress').value.trim(),
