@@ -79,25 +79,44 @@ $('applyReport').addEventListener('click', () => {
   renderReports();
 });
 
+function populateReportYears() {
+  const years = [...new Set([
+    ...state.attentions.map(a => toDate(a.date)?.getFullYear()),
+    ...state.procedures.map(p => toDate(p.date)?.getFullYear()),
+  ].filter(Boolean))].sort((a,b) => b - a);
+  const select = $('reportYearSelect');
+  select.innerHTML = years.map(year => `<option value="${year}">${year}</option>`).join('');
+  if (!years.length) {
+    const current = new Date().getFullYear();
+    select.innerHTML = `<option value="${current}">${current}</option>`;
+  }
+}
+
 $('reportAll').addEventListener('click', () => {
   reportRange = getDefaultReportRange();
+  $('reportMonthSelect').value = '';
   renderReports();
 });
 
 $('reportYear').addEventListener('click', () => {
-  const today = new Date();
-  const from = `${today.getFullYear()}-01-01`;
-  const to = isoDate(today);
-  reportRange = { from, to };
+  const year = Number($('reportYearSelect').value) || new Date().getFullYear();
+  reportRange = { from: `${year}-01-01`, to: `${year}-12-31` };
+  $('reportMonthSelect').value = '';
   renderReports();
 });
 
 $('reportMonth').addEventListener('click', () => {
-  const today = new Date();
-  const from = isoDate(new Date(today.getFullYear(), today.getMonth(), 1));
-  const to = isoDate(today);
-  reportRange = { from, to };
+  const year = Number($('reportYearSelect').value) || new Date().getFullYear();
+  const month = $('reportMonthSelect').value || String(new Date().getMonth() + 1).padStart(2, '0');
+  $('reportMonthSelect').value = month;
+  const lastDay = new Date(year, Number(month), 0).getDate();
+  reportRange = { from: `${year}-${month}-01`, to: `${year}-${month}-${String(lastDay).padStart(2, '0')}` };
   renderReports();
+});
+
+$('printReport').addEventListener('click', () => {
+  renderReports();
+  window.print();
 });
 $('exportJson').addEventListener('click', exportJson);
 $('exportCsv').addEventListener('click', exportCsv);
@@ -139,4 +158,5 @@ $('attentionDate').value = nowLocalInput();
 $('procedureDate').value = nowLocalInput();
 $('reportFrom').value = reportRange.from;
 $('reportTo').value = reportRange.to;
+populateReportYears();
 renderAll();
