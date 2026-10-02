@@ -54,8 +54,10 @@ function renderReports() {
   $('reportFrom').value = reportRange.from;
   $('reportTo').value = reportRange.to;
   const { attentions, procedures, patientIds } = getReportData();
+  const encounterProcedures = procedures.filter(p => p.isEncounter);
+
   $('reportPatients').textContent = patientIds.size;
-  $('reportAttentions').textContent = attentions.length;
+  $('reportAttentions').textContent = attentions.length + encounterProcedures.length;
   $('reportProcedures').textContent = procedures.length;
   $('reportAmount').textContent = fmtCurrency(procedures.reduce((s,p) => s + Number(p.amount || 0), 0));
 
@@ -73,6 +75,7 @@ function renderReports() {
     ...attentions.map(a => ({ date: a.date, patientId: a.patientId, type: 'Atención', detail: a.reason || 'Consulta clínica', amount: 0 })),
     ...procedures.map(p => ({ date: p.date, patientId: p.patientId, type: 'Procedimiento', detail: p.name, amount: Number(p.amount || 0) })),
   ].sort((a,b) => b.date.localeCompare(a.date));
+
   const tbody = $('movementsTable');
   tbody.innerHTML = '';
   movements.forEach(m => {
