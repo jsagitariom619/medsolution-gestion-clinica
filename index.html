@@ -181,7 +181,13 @@
           <article class="panel report-filter-panel">
             <div class="panel-head responsive-head">
               <div><h2>Reportes clínicos y financieros</h2><p>Atenciones, procedimientos e ingresos registrados por período</p></div>
+              <div class="print-report-heading">
+                <h1>MedSolution — Gestión Clínica</h1>
+                <p>Reporte clínico y financiero</p>
+                <strong id="printReportPeriod">Período</strong>
+              </div>
               <div class="report-actions">
+                <button class="primary print-button" id="printReport">Imprimir reporte</button>
                 <button class="secondary" id="exportCsv">Exportar CSV</button>
                 <button class="secondary" id="exportJson">Respaldar JSON</button>
                 <label class="secondary file-button">Importar JSON<input type="file" id="importJson" accept="application/json" hidden /></label>
@@ -189,8 +195,20 @@
             </div>
             <div class="report-presets">
               <button class="secondary" id="reportAll">Todo el historial</button>
-              <button class="secondary" id="reportYear">Este año</button>
-              <button class="secondary" id="reportMonth">Este mes</button>
+              <label class="report-period-select">Año
+                <select id="reportYearSelect"></select>
+              </label>
+              <label class="report-period-select">Mes
+                <select id="reportMonthSelect">
+                  <option value="">Todo el año</option>
+                  <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
+                  <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
+                  <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
+                  <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+                </select>
+              </label>
+              <button class="secondary" id="reportYear">Ver año</button>
+              <button class="secondary" id="reportMonth">Ver mes</button>
             </div>
             <div class="filters-inline">
               <label>Desde<input id="reportFrom" type="date" /></label>
