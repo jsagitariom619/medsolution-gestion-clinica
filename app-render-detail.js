@@ -209,7 +209,7 @@ function renderReports() {
   tbody.innerHTML = '';
   movements.forEach(m => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${fmtDate(m.date)}</td><td>${escapeHtml(patientName(m.patientId))}</td><td>${escapeHtml(m.type)}</td><td>${escapeHtml(m.detail)}</td><td>${escapeHtml(m.professional || '—')}</td><td class="report-money">${m.amount ? fmtCurrency(m.amount) : '—'}</td>`;
+    tr.innerHTML = `<td>${fmtDate(m.date, false)}</td><td>${escapeHtml(patientName(m.patientId))}</td><td>${escapeHtml(m.type)}</td><td>${escapeHtml(m.detail)}</td><td>${escapeHtml(m.professional || '—')}</td><td class="report-money">${m.amount ? fmtCurrency(m.amount) : '—'}</td>`;
     tbody.appendChild(tr);
   });
   $('movementsEmpty').classList.toggle('hidden', movements.length > 0);
