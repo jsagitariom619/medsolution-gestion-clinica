@@ -185,6 +185,10 @@
                 <h1>MedSolution — Gestión Clínica</h1>
                 <p>Reporte clínico y financiero</p>
                 <strong id="printReportPeriod">Período</strong>
+                <div class="print-management-summary">
+                  <span>Promedio mensual de ingresos <b id="printMonthlyAverage">Bs 0,00</b></span>
+                  <span>Promedio mensual de atenciones <b id="printAttentionAverage">0</b></span>
+                </div>
               </div>
               <div class="report-actions">
                 <button class="primary print-button" id="printReport">Imprimir reporte</button>
@@ -249,7 +253,7 @@
             </article>
           </div>
 
-          <article class="panel report-table-panel">
+          <article class="panel report-table-panel management-monthly-panel">
             <div class="panel-head"><div><h2>Resumen mensual</h2><p>Comparación de pacientes, atenciones e ingresos por mes</p></div></div>
             <div class="table-wrap">
               <table>
@@ -260,7 +264,7 @@
             </div>
           </article>
 
-          <article class="panel report-table-panel">
+          <article class="panel report-table-panel management-procedure-panel">
             <div class="panel-head"><div><h2>Ingresos por procedimiento</h2><p>Cantidad, recaudación y participación sobre el total</p></div></div>
             <div class="table-wrap">
               <table>
@@ -271,7 +275,7 @@
             </div>
           </article>
 
-          <article class="panel">
+          <article class="panel report-detail-panel">
             <div class="panel-head"><div><h2>Detalle de movimientos</h2><p>Registro completo de atenciones y procedimientos del período seleccionado</p></div></div>
             <div class="table-wrap">
               <table>
