@@ -283,3 +283,11 @@ td small { color: var(--muted); }
   body.print-management .management-procedure-panel { margin-bottom:0 !important; }
   body.print-management .report-stats-six { margin-bottom:4mm !important; }
 }
+
+
+.brand-professional { display:block; margin-top:3px; color:#98a2b3; font-size:10px; font-weight:650; line-height:1.2; }
+.settings-panel { max-width:760px; }
+.settings-preview { padding:18px; border:1px solid var(--line); border-radius:14px; background:#f8fafc; display:grid; gap:4px; }
+.settings-preview span { color:var(--muted); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+.settings-preview strong { font-size:16px; }
+.settings-preview small { color:#475467; font-size:12px; font-weight:700; }
