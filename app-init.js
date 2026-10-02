@@ -77,6 +77,27 @@ $('applyReport').addEventListener('click', () => {
   reportRange = { from, to };
   renderReports();
 });
+
+$('reportAll').addEventListener('click', () => {
+  reportRange = getDefaultReportRange();
+  renderReports();
+});
+
+$('reportYear').addEventListener('click', () => {
+  const today = new Date();
+  const from = `${today.getFullYear()}-01-01`;
+  const to = isoDate(today);
+  reportRange = { from, to };
+  renderReports();
+});
+
+$('reportMonth').addEventListener('click', () => {
+  const today = new Date();
+  const from = isoDate(new Date(today.getFullYear(), today.getMonth(), 1));
+  const to = isoDate(today);
+  reportRange = { from, to };
+  renderReports();
+});
 $('exportJson').addEventListener('click', exportJson);
 $('exportCsv').addEventListener('click', exportCsv);
 $('importJson').addEventListener('change', (e) => { if (e.target.files?.[0]) importJson(e.target.files[0]); });
