@@ -180,11 +180,14 @@ function renderPatients() {
   list.forEach(p => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><strong>${escapeHtml(p.name)}</strong><small>${p.sex ? escapeHtml(p.sex) : 'Sin sexo especificado'}</small></td>
-      <td>${escapeHtml(p.doc || '—')}</td>
-      <td>${escapeHtml(p.phone || '—')}</td>
+      <td><strong>${escapeHtml(p.name)}</strong></td>
       <td>${escapeHtml(getAge(p.dob, p.ageRecorded))}</td>
-      <td><div class="row-actions"><button class="row-action" data-history="${p.id}">Historia</button><button class="row-action" data-edit-patient="${p.id}">Editar</button><button class="row-action" data-delete-patient="${p.id}">Eliminar</button></div></td>`;
+      <td><div class="row-actions patient-actions">
+        <button class="row-action" data-history="${p.id}">Historia clínica</button>
+        <button class="row-action" data-new-attention="${p.id}">Nueva atención</button>
+        <button class="row-action" data-new-procedure="${p.id}">Nuevo procedimiento</button>
+        <button class="row-action" data-edit-patient="${p.id}">Editar</button>
+      </div></td>`;
     tbody.appendChild(tr);
   });
   $('patientsEmpty').classList.toggle('hidden', list.length > 0);
