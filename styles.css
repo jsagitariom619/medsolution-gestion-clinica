@@ -231,3 +231,33 @@ td small { color: var(--muted); }
   background: #f4f3ff;
   border-color: #d9d6fe;
 }
+
+
+.print-report-heading { display: none; }
+.report-period-select { display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid var(--line); border-radius:9px; background:#fff; font-size:11px; font-weight:700; }
+.report-period-select select { border:0; outline:0; background:transparent; font:inherit; min-width:70px; }
+
+@media print {
+  @page { size: A4 portrait; margin: 12mm; }
+  body { background:#fff !important; color:#111827 !important; font-size:9pt; }
+  .sidebar, .topbar, .report-filter-panel, .toast, .menu-toggle { display:none !important; }
+  .main { margin:0 !important; width:100% !important; }
+  .content { padding:0 !important; max-width:none !important; }
+  .view { display:none !important; }
+  #view-reports { display:block !important; }
+  .print-report-heading { display:block !important; margin:0 0 12mm; padding-bottom:5mm; border-bottom:1px solid #d0d5dd; }
+  .print-report-heading h1 { margin:0 0 2mm; font-size:18pt; }
+  .print-report-heading p { margin:0 0 2mm; font-size:10pt; }
+  .report-stats-six { grid-template-columns:repeat(3,1fr) !important; gap:3mm !important; }
+  .stat-card, .panel { box-shadow:none !important; border:1px solid #d0d5dd !important; break-inside:avoid; }
+  .stat-card { padding:4mm !important; min-height:0 !important; }
+  .stat-card strong { font-size:16pt !important; }
+  .reports-grid { grid-template-columns:1fr 1fr !important; gap:4mm !important; }
+  .panel { padding:4mm !important; margin-bottom:4mm !important; }
+  .bars { max-height:none !important; overflow:visible !important; }
+  .table-wrap { overflow:visible !important; }
+  table, .report-table-panel table { min-width:0 !important; width:100% !important; font-size:7.5pt !important; }
+  th, td { padding:2mm 1.5mm !important; }
+  thead { display:table-header-group; }
+  tr { break-inside:avoid; }
+}
