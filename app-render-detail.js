@@ -50,18 +50,42 @@ function getReportData() {
   return { attentions, procedures, patientIds };
 }
 
+function reportMonthKey(value) {
+  const d = toDate(value);
+  if (!d) return '';
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function reportMonthLabel(key) {
+  const [year, month] = key.split('-').map(Number);
+  if (!year || !month) return key;
+  const text = new Intl.DateTimeFormat('es-BO', { month: 'long', year: 'numeric' }).format(new Date(year, month - 1, 1));
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 function renderReports() {
   $('reportFrom').value = reportRange.from;
   $('reportTo').value = reportRange.to;
+
   const { attentions, procedures, patientIds } = getReportData();
   const encounterProcedures = procedures.filter(p => p.isEncounter);
+  const attentionCount = attentions.length + encounterProcedures.length;
+  const revenue = procedures.reduce((sum, p) => sum + Number(p.amount || 0), 0);
+  const average = procedures.length ? revenue / procedures.length : 0;
+  const activeDays = new Set([...attentions, ...procedures].map(x => isoDate(new Date(x.date)))).size;
 
   $('reportPatients').textContent = patientIds.size;
-  $('reportAttentions').textContent = attentions.length + encounterProcedures.length;
+  $('reportAttentions').textContent = attentionCount;
   $('reportProcedures').textContent = procedures.length;
-  $('reportAmount').textContent = fmtCurrency(procedures.reduce((s,p) => s + Number(p.amount || 0), 0));
+  $('reportAmount').textContent = fmtCurrency(revenue);
+  $('reportAverage').textContent = fmtCurrency(average);
+  $('reportActiveDays').textContent = activeDays;
 
-  const procCounts = procedures.reduce((acc,p) => { acc[p.name] = (acc[p.name] || 0) + 1; return acc; }, {});
+  const procCounts = procedures.reduce((acc,p) => {
+    const key = p.name || 'Sin especificar';
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
   renderBars($('procedureBars'), procCounts, 'No hay procedimientos en el período.');
 
   const daily = {};
@@ -69,37 +93,140 @@ function renderReports() {
     const key = isoDate(new Date(x.date));
     daily[key] = (daily[key] || 0) + 1;
   });
-  renderBars($('dailyBars'), Object.fromEntries(Object.entries(daily).sort(([a],[b]) => a.localeCompare(b))), 'No hay actividad en el período.', key => fmtDate(`${key}T12:00:00`, false));
+  renderBars(
+    $('dailyBars'),
+    daily,
+    'No hay actividad en el período.',
+    key => fmtDate(`${key}T12:00:00`, false)
+  );
+
+  const monthly = {};
+  const ensureMonth = key => {
+    if (!monthly[key]) {
+      monthly[key] = { patients: new Set(), attentions: 0, procedures: 0, revenue: 0 };
+    }
+    return monthly[key];
+  };
+
+  attentions.forEach(a => {
+    const key = reportMonthKey(a.date);
+    if (!key) return;
+    const row = ensureMonth(key);
+    row.patients.add(a.patientId);
+    row.attentions += 1;
+  });
+
+  procedures.forEach(p => {
+    const key = reportMonthKey(p.date);
+    if (!key) return;
+    const row = ensureMonth(key);
+    row.patients.add(p.patientId);
+    row.procedures += 1;
+    row.revenue += Number(p.amount || 0);
+    if (p.isEncounter) row.attentions += 1;
+  });
+
+  const monthKeys = Object.keys(monthly).sort();
+  const monthlyIncome = Object.fromEntries(monthKeys.map(key => [key, monthly[key].revenue]));
+  const monthlyAttention = Object.fromEntries(monthKeys.map(key => [key, monthly[key].attentions]));
+
+  renderBars(
+    $('monthlyIncomeBars'),
+    monthlyIncome,
+    'No hay ingresos en el período.',
+    reportMonthLabel,
+    value => fmtCurrency(value),
+    true
+  );
+  renderBars(
+    $('monthlyAttentionBars'),
+    monthlyAttention,
+    'No hay atenciones en el período.',
+    reportMonthLabel,
+    value => String(value),
+    true
+  );
+
+  const monthlyBody = $('monthlySummaryTable');
+  monthlyBody.innerHTML = '';
+  [...monthKeys].reverse().forEach(key => {
+    const row = monthly[key];
+    const avg = row.procedures ? row.revenue / row.procedures : 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="report-period">${escapeHtml(reportMonthLabel(key))}</td><td>${row.patients.size}</td><td>${row.attentions}</td><td>${row.procedures}</td><td class="report-money">${fmtCurrency(row.revenue)}</td><td class="report-money">${fmtCurrency(avg)}</td>`;
+    monthlyBody.appendChild(tr);
+  });
+  $('monthlySummaryEmpty').classList.toggle('hidden', monthKeys.length > 0);
+
+  const procSummary = {};
+  procedures.forEach(p => {
+    const key = p.name || 'Sin especificar';
+    if (!procSummary[key]) procSummary[key] = { count: 0, revenue: 0 };
+    procSummary[key].count += 1;
+    procSummary[key].revenue += Number(p.amount || 0);
+  });
+
+  const procRows = Object.entries(procSummary).sort((a,b) => b[1].revenue - a[1].revenue);
+  const procedureBody = $('procedureSummaryTable');
+  procedureBody.innerHTML = '';
+  procRows.forEach(([name, row]) => {
+    const avg = row.count ? row.revenue / row.count : 0;
+    const share = revenue ? (row.revenue / revenue) * 100 : 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><strong>${escapeHtml(name)}</strong></td><td>${row.count}</td><td class="report-money">${fmtCurrency(row.revenue)}</td><td class="report-money">${fmtCurrency(avg)}</td><td class="report-share"><span>${share.toFixed(1)}%</span><div class="report-share-track"><div class="report-share-fill" style="width:${Math.max(2, share)}%"></div></div></td>`;
+    procedureBody.appendChild(tr);
+  });
+  $('procedureSummaryEmpty').classList.toggle('hidden', procRows.length > 0);
 
   const movements = [
-    ...attentions.map(a => ({ date: a.date, patientId: a.patientId, type: 'Atención', detail: a.reason || 'Consulta clínica', amount: 0 })),
-    ...procedures.map(p => ({ date: p.date, patientId: p.patientId, type: 'Procedimiento', detail: p.name, amount: Number(p.amount || 0) })),
+    ...attentions.map(a => ({
+      date: a.date,
+      patientId: a.patientId,
+      type: 'Atención',
+      detail: a.reason || 'Consulta clínica',
+      professional: a.professional || '',
+      amount: 0
+    })),
+    ...procedures.map(p => ({
+      date: p.date,
+      patientId: p.patientId,
+      type: 'Procedimiento',
+      detail: p.name,
+      professional: p.professional || '',
+      amount: Number(p.amount || 0)
+    })),
   ].sort((a,b) => b.date.localeCompare(a.date));
 
   const tbody = $('movementsTable');
   tbody.innerHTML = '';
   movements.forEach(m => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${fmtDate(m.date)}</td><td>${escapeHtml(patientName(m.patientId))}</td><td>${escapeHtml(m.type)}</td><td>${escapeHtml(m.detail)}</td><td>${m.amount ? fmtCurrency(m.amount) : '—'}</td>`;
+    tr.innerHTML = `<td>${fmtDate(m.date)}</td><td>${escapeHtml(patientName(m.patientId))}</td><td>${escapeHtml(m.type)}</td><td>${escapeHtml(m.detail)}</td><td>${escapeHtml(m.professional || '—')}</td><td class="report-money">${m.amount ? fmtCurrency(m.amount) : '—'}</td>`;
     tbody.appendChild(tr);
   });
   $('movementsEmpty').classList.toggle('hidden', movements.length > 0);
 }
 
-function renderBars(root, data, emptyText, labelFn = x => x) {
-  const entries = Object.entries(data).sort((a,b) => b[1] - a[1]).slice(0, 12);
+function renderBars(root, data, emptyText, labelFn = x => x, valueFn = x => String(x), preserveOrder = false) {
+  let entries = Object.entries(data);
+  if (!preserveOrder) entries = entries.sort((a,b) => b[1] - a[1]);
+  entries = entries.slice(0, 36);
+
   if (!entries.length) {
     root.className = 'bars empty-state';
     root.textContent = emptyText;
     return;
   }
+
   root.className = 'bars';
   root.innerHTML = '';
-  const max = Math.max(...entries.map(([,v]) => v), 1);
+  const max = Math.max(...entries.map(([,v]) => Number(v) || 0), 1);
+
   entries.forEach(([label, value]) => {
+    const numeric = Number(value) || 0;
     const row = document.createElement('div');
     row.className = 'bar-row';
-    row.innerHTML = `<div class="bar-label"><span>${escapeHtml(labelFn(label))}</span><strong>${value}</strong></div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(4, (value/max)*100)}%"></div></div>`;
+    row.innerHTML = `<div class="bar-label"><span>${escapeHtml(labelFn(label))}</span><strong>${escapeHtml(valueFn(numeric))}</strong></div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(4, (numeric/max)*100)}%"></div></div>`;
     root.appendChild(row);
   });
 }
