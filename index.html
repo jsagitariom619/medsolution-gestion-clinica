@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#155eef" />
+  <title>MedSolution — Gestión Clínica</title>
+  <meta name="description" content="Gestión de pacientes, atenciones, historias clínicas, procedimientos y reportes." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">M</div>
+        <div>
+          <strong>MedSolution</strong>
+          <span>Gestión Clínica</span>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Navegación principal">
+        <button class="nav-item active" data-view="dashboard"><span>⌂</span> Inicio</button>
+        <button class="nav-item" data-view="patients"><span>👤</span> Pacientes</button>
+        <button class="nav-item" data-view="attention"><span>✚</span> Atención</button>
+        <button class="nav-item" data-view="history"><span>▤</span> Historias clínicas</button>
+        <button class="nav-item" data-view="procedures"><span>⌁</span> Procedimientos</button>
+        <button class="nav-item" data-view="reports"><span>▥</span> Reportes</button>
+      </nav>
+
+      <div class="sidebar-note">
+        <strong>Versión inicial</strong>
+        <span>Datos guardados en este navegador.</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+        <div>
+          <h1 id="pageTitle">Inicio</h1>
+          <p id="pageSubtitle">Resumen operativo de la consulta</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="status-pill"><span class="status-dot"></span> Local</div>
+          <button class="primary small" data-go="attention">+ Nueva atención</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="view active" id="view-dashboard">
+          <div class="notice">
+            <div>
+              <strong>Plataforma lista para comenzar desde cero.</strong>
+              <p>No se cargaron pacientes ni movimientos ficticios. Puedes registrar actividad real o importar un respaldo propio.</p>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card"><span>Pacientes</span><strong id="statPatients">0</strong><small>Total registrados</small></article>
+            <article class="stat-card"><span>Atenciones</span><strong id="statAttentions">0</strong><small>Este mes</small></article>
+            <article class="stat-card"><span>Procedimientos</span><strong id="statProcedures">0</strong><small>Este mes</small></article>
+            <article class="stat-card"><span>Movimientos</span><strong id="statAmount">Bs 0,00</strong><small>Procedimientos del mes</small></article>
+          </div>
+
+          <div class="grid-2 dashboard-grid">
+            <article class="panel">
+              <div class="panel-head"><div><h2>Actividad reciente</h2><p>Últimas atenciones y procedimientos</p></div></div>
+              <div id="recentActivity" class="activity-list empty-state">Aún no hay movimientos registrados.</div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><div><h2>Accesos rápidos</h2><p>Operaciones frecuentes</p></div></div>
+              <div class="quick-grid">
+                <button class="quick-card" data-go="patients"><span>👤</span><strong>Nuevo paciente</strong><small>Registrar datos personales</small></button>
+                <button class="quick-card" data-go="attention"><span>✚</span><strong>Nueva atención</strong><small>Registrar consulta clínica</small></button>
+                <button class="quick-card" data-go="procedures"><span>⌁</span><strong>Procedimiento</strong><small>Registrar servicio realizado</small></button>
+                <button class="quick-card" data-go="reports"><span>▥</span><strong>Ver reportes</strong><small>Revisar movimientos</small></button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-patients">
+          <div class="section-grid">
+            <article class="panel form-panel">
+              <div class="panel-head"><div><h2 id="patientFormTitle">Registrar paciente</h2><p>Datos básicos para la ficha clínica</p></div></div>
+              <form id="patientForm" class="form-grid">
+                <input type="hidden" id="patientId" />
+                <label class="span-2">Nombre completo<input id="patientName" required autocomplete="name" placeholder="Ej. Ana Pérez" /></label>
+                <label>CI / Documento<input id="patientDoc" placeholder="Opcional" /></label>
+                <label>Fecha de nacimiento<input id="patientDob" type="date" /></label>
+                <label>Sexo<select id="patientSex"><option value="">Sin especificar</option><option>Femenino</option><option>Masculino</option><option>Otro</option></select></label>
+                <label>Teléfono<input id="patientPhone" type="tel" placeholder="Ej. 76543210" /></label>
+                <label class="span-2">Dirección<input id="patientAddress" placeholder="Opcional" /></label>
+                <label class="span-2">Alergias<textarea id="patientAllergies" rows="2" placeholder="Medicamentos, alimentos u otras"></textarea></label>
+                <label class="span-2">Antecedentes / observaciones<textarea id="patientNotes" rows="3" placeholder="Datos relevantes para la historia clínica"></textarea></label>
+                <div class="form-actions span-2"><button type="button" class="secondary hidden" id="cancelPatientEdit">Cancelar</button><button class="primary" type="submit" id="patientSubmit">Guardar paciente</button></div>
+              </form>
+            </article>
+
+            <article class="panel list-panel">
+              <div class="panel-head responsive-head">
+                <div><h2>Pacientes registrados</h2><p id="patientsCountLabel">0 pacientes</p></div>
+                <input class="search" id="patientSearch" placeholder="Buscar paciente..." aria-label="Buscar paciente" />
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Paciente</th><th>Documento</th><th>Teléfono</th><th>Edad</th><th></th></tr></thead>
+                  <tbody id="patientsTable"></tbody>
+                </table>
+                <div id="patientsEmpty" class="empty-state">No hay pacientes registrados.</div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-attention">
+          <div class="section-grid">
+            <article class="panel form-panel">
+              <div class="panel-head"><div><h2>Nueva atención</h2><p>Registra una consulta vinculada a un paciente</p></div></div>
+              <form id="attentionForm" class="form-grid">
+                <label class="span-2">Paciente<select id="attentionPatient" required></select></label>
+                <label>Fecha y hora<input id="attentionDate" type="datetime-local" required /></label>
+                <label>Motivo de consulta<input id="attentionReason" required placeholder="Síntoma o motivo principal" /></label>
+                <div class="span-2 subheading">Signos vitales</div>
+                <label>PA<input id="vitalBp" placeholder="120/80" /></label>
+                <label>FC (lpm)<input id="vitalHr" inputmode="numeric" placeholder="72" /></label>
+                <label>Temperatura (°C)<input id="vitalTemp" inputmode="decimal" placeholder="36.5" /></label>
+                <label>SpO₂ (%)<input id="vitalSpo2" inputmode="numeric" placeholder="98" /></label>
+                <label>Peso (kg)<input id="vitalWeight" inputmode="decimal" placeholder="70" /></label>
+                <label>Talla (cm)<input id="vitalHeight" inputmode="decimal" placeholder="170" /></label>
+                <label class="span-2">Evaluación clínica<textarea id="attentionAssessment" rows="3" placeholder="Hallazgos relevantes"></textarea></label>
+                <label class="span-2">Diagnóstico / impresión diagnóstica<textarea id="attentionDiagnosis" rows="2" placeholder="Diagnóstico o hipótesis clínica"></textarea></label>
+                <label class="span-2">Plan / indicaciones<textarea id="attentionPlan" rows="3" placeholder="Tratamiento, estudios, recomendaciones o seguimiento"></textarea></label>
+                <div class="form-actions span-2"><button class="primary" type="submit">Guardar atención</button></div>
+              </form>
+            </article>
+
+            <article class="panel list-panel">
+              <div class="panel-head"><div><h2>Últimas atenciones</h2><p>Registro cronológico reciente</p></div></div>
+              <div id="attentionList" class="stack-list empty-state">No hay atenciones registradas.</div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-history">
+          <article class="panel">
+            <div class="panel-head responsive-head">
+              <div><h2>Historia clínica</h2><p>Vista longitudinal por paciente</p></div>
+              <select class="history-select" id="historyPatient"></select>
+            </div>
+            <div id="historyContent" class="history-content empty-state">Selecciona un paciente para revisar su historia clínica.</div>
+          </article>
+        </section>
+
+        <section class="view" id="view-procedures">
+          <div class="section-grid">
+            <article class="panel form-panel">
+              <div class="panel-head"><div><h2>Registrar procedimiento</h2><p>Servicio o procedimiento realizado al paciente</p></div></div>
+              <form id="procedureForm" class="form-grid">
+                <label class="span-2">Paciente<select id="procedurePatient" required></select></label>
+                <label>Fecha y hora<input id="procedureDate" type="datetime-local" required /></label>
+                <label>Categoría<select id="procedureCategory"><option>Procedimiento</option><option>Enfermería</option><option>Diagnóstico</option><option>Tratamiento</option><option>Otro</option></select></label>
+                <label class="span-2">Procedimiento<input id="procedureName" required placeholder="Ej. Curación, nebulización, infiltración..." /></label>
+                <label>Profesional<input id="procedureProfessional" placeholder="Nombre del responsable" /></label>
+                <label>Monto (Bs)<input id="procedureAmount" type="number" min="0" step="0.01" value="0" /></label>
+                <label class="span-2">Observaciones<textarea id="procedureNotes" rows="3" placeholder="Materiales, evolución u observaciones"></textarea></label>
+                <div class="form-actions span-2"><button class="primary" type="submit">Guardar procedimiento</button></div>
+              </form>
+            </article>
+
+            <article class="panel list-panel">
+              <div class="panel-head"><div><h2>Procedimientos recientes</h2><p>Últimos servicios registrados</p></div></div>
+              <div id="procedureList" class="stack-list empty-state">No hay procedimientos registrados.</div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-reports">
+          <article class="panel report-filter-panel">
+            <div class="panel-head responsive-head">
+              <div><h2>Reportes de movimiento</h2><p>Filtra la actividad por período</p></div>
+              <div class="report-actions">
+                <button class="secondary" id="exportCsv">Exportar CSV</button>
+                <button class="secondary" id="exportJson">Respaldar JSON</button>
+                <label class="secondary file-button">Importar JSON<input type="file" id="importJson" accept="application/json" hidden /></label>
+              </div>
+            </div>
+            <div class="filters-inline">
+              <label>Desde<input id="reportFrom" type="date" /></label>
+              <label>Hasta<input id="reportTo" type="date" /></label>
+              <button class="primary" id="applyReport">Aplicar</button>
+            </div>
+          </article>
+
+          <div class="stats-grid report-stats">
+            <article class="stat-card"><span>Pacientes atendidos</span><strong id="reportPatients">0</strong><small>Únicos en el período</small></article>
+            <article class="stat-card"><span>Atenciones</span><strong id="reportAttentions">0</strong><small>Consultas registradas</small></article>
+            <article class="stat-card"><span>Procedimientos</span><strong id="reportProcedures">0</strong><small>Servicios realizados</small></article>
+            <article class="stat-card"><span>Importe registrado</span><strong id="reportAmount">Bs 0,00</strong><small>Total de procedimientos</small></article>
+          </div>
+
+          <div class="grid-2 reports-grid">
+            <article class="panel">
+              <div class="panel-head"><div><h2>Procedimientos por tipo</h2><p>Distribución del período</p></div></div>
+              <div id="procedureBars" class="bars empty-state">No hay procedimientos en el período.</div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><div><h2>Actividad diaria</h2><p>Atenciones + procedimientos</p></div></div>
+              <div id="dailyBars" class="bars empty-state">No hay actividad en el período.</div>
+            </article>
+          </div>
+
+          <article class="panel">
+            <div class="panel-head"><div><h2>Detalle de movimientos</h2><p>Registro consolidado del período seleccionado</p></div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Fecha</th><th>Paciente</th><th>Tipo</th><th>Detalle</th><th>Importe</th></tr></thead>
+                <tbody id="movementsTable"></tbody>
+              </table>
+              <div id="movementsEmpty" class="empty-state">No hay movimientos para este período.</div>
+            </div>
+          </article>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
